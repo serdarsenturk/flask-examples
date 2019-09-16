@@ -1,0 +1,23 @@
+http://127.0.0.1:5000/
+
+  route /
+
+  	set new cookies
+
+  		SecretToken : random string
+
+
+  route /secretpage
+
+  		If cookie does not exist : return 401 unauthorized
+
+  		If cookie exists but not equals to "serdar_secure_string" : return 403
+
+  		else : return "Woohoo!"
+
+
+
+
+
+
+Store all request and responses as screenshot in the repo.
