@@ -43,9 +43,16 @@ def createNewProduct():
     app.logger.warning("new product created")
     return jsonify(product)
 
-@app.route('/products/231', methods = ['DELETE'])
-def deleteProduct():
+@app.route('/products/<int:productId>', methods = ['DELETE'])
+def deleteProduct(productId):
     # consider getting productId from the url.
     # see : http://flask.palletsprojects.com/en/1.1.x/quickstart/#variable-rules
-    del products[231]
+    del products[productId]
     return jsonify(products)
+
+@app.route('/param')
+def queryString():
+    arg1 = request.args['category']
+    arg2 = request.args['brand']
+
+    return 'Filter:' + arg1 + 'Brand:' + arg2
