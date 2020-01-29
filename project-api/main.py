@@ -50,7 +50,7 @@ def deleteProduct(productId):
     del products[productId]
     return jsonify(products)
 
-@app.route('/param')
+@app.route('/products')
 def queryString():
     arg1 = request.args['category']
     arg2 = request.args['brand']
