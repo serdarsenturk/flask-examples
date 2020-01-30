@@ -56,3 +56,8 @@ def queryString():
     arg2 = request.args['brand']
 
     return 'Filter:' + arg1 + 'Brand:' + arg2
+
+@app.route('/products/<int:productId>/<name>', methods = ['PUT'])
+def updateProduct(productId,name):
+    products[productId]['name'] = name
+    return jsonify(products)
