@@ -57,7 +57,8 @@ def queryString():
 
     return 'Filter:' + arg1 + 'Brand:' + arg2
 
-@app.route('/products/<int:productId>/<name>', methods = ['PUT'])
-def updateProduct(productId,name):
-    products[productId]['name'] = name
+@app.route('/products/<int:productId>', methods = ['PUT'])
+def putProduct(productId):
+    product = request.get_json()
+    products[productId] = product
     return jsonify(products)
