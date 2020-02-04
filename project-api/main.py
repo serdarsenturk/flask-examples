@@ -2,6 +2,12 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
+class Product:
+    def __init__(self,name,id,price):
+        self.name = name
+        self.id = id
+        self.price = price #TODO: Consider changing properties to private
+
 products = {
     231 : {
         'id' : 231,
@@ -23,7 +29,7 @@ products = {
 @app.route('/products', methods=['GET'])
 def returnAllProducts():
     app.logger.warning("Return all products")
-    return jsonify(products)
+    return jsonify(Product)
 
 
 @app.route('/products', methods=['POST'])
@@ -61,4 +67,4 @@ def queryString():
 def putProduct(productId):
     product = request.get_json()
     products[productId] = product
-    return jsonify(products)
+    return jsonify(products )
