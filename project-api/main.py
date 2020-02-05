@@ -29,7 +29,7 @@ products = {
 @app.route('/products', methods=['GET'])
 def returnAllProducts():
     app.logger.warning("Return all products")
-    return jsonify(Product)
+    return jsonify(products)
 
 
 @app.route('/products', methods=['POST'])
@@ -44,10 +44,10 @@ def createNewProduct():
     # Once bunu cevapla:: what is the output of the GET /products call after you add new product?
     # okumuyordum burayı.whatsapp dan yaz
 
-    productId = product[id]
-    products[productId] = product
+    productId = Product[id]
+    products[productId] = Product
     app.logger.warning("new product created")
-    return jsonify(product)
+    return jsonify(Product)
 
 @app.route('/products/<int:productId>', methods = ['DELETE'])
 def deleteProduct(productId):
