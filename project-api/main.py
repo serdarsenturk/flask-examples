@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import jsonpickle
 
 app = Flask(__name__)
 
@@ -7,6 +8,8 @@ class Product:
         self.name = name
         self.id = id
         self.price = price #TODO: Consider changing properties to private
+
+classProducts = {1:Product}
 
 products = {
     231 : {
@@ -29,32 +32,25 @@ products = {
 @app.route('/products', methods=['GET'])
 def returnAllProducts():
     app.logger.warning("Return all products")
-    return jsonify(products)
+    return jsonpickle.encode(classProducts)
 
 
 @app.route('/products', methods=['POST'])
 def createNewProduct():
     product = request.get_json()
 
-    # products is a dictionary. A dictionary records contains a Key and a Value
-    # in that case your record only has Value
-
-    # what is the Key for this new record?
-
-    # Once bunu cevapla:: what is the output of the GET /products call after you add new product?
-    # okumuyordum burayı.whatsapp dan yaz
-
-    productId = Product[id]
-    products[productId] = Product
+    productId = product['id']
+    classProducts[productId] = Product(product['id'],product['name'],product['price'])
     app.logger.warning("new product created")
-    return jsonify(Product)
+    
+    return jsonify(product)
 
 @app.route('/products/<int:productId>', methods = ['DELETE'])
 def deleteProduct(productId):
     # consider getting productId from the url.
     # see : http://flask.palletsprojects.com/en/1.1.x/quickstart/#variable-rules
-    del products[productId]
-    return jsonify(products)
+    del classProducts[productId]
+    return jsonify(classProducts)
 
 @app.route('/products')
 def queryString():
@@ -66,5 +62,5 @@ def queryString():
 @app.route('/products/<int:productId>', methods = ['PUT'])
 def putProduct(productId):
     product = request.get_json()
-    products[productId] = product
-    return jsonify(products )
+    classProducts[productId] = Product(product['id'],product['name'],product['price'])
+    return jsonpickle.encode(classProducts)
