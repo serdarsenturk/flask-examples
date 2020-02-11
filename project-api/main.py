@@ -4,36 +4,40 @@ import jsonpickle
 app = Flask(__name__)
 
 class Product:
-    def __init__(self,name,id,price):
+    def __init__(self,id,name,price):
+        self.id = id        
         self.name = name
-        self.id = id
         self.price = price #TODO: Consider changing properties to private
 
-classProducts = {1:Product}
-
-products = {
-    231 : {
-        'id' : 231,
-        'name' : 'A',
-        'price' : 1000
-    }, 
-    232 : {
-        'id' : 232,
-        'name' : 'B',
-        'price' : 1001
-    },
-    233 : {
-        'id' : 233,
-        'name' : "C",
-        'price' : 1002
-    }
+classProducts = {
+    231: Product(231,'A',1000),
+    232: Product(232,'B',1001),
+    233: Product(233,'C',1002) 
 }
 
 @app.route('/products', methods=['GET'])
 def returnAllProducts():
     app.logger.warning("Return all products")
-    return jsonpickle.encode(classProducts)
+    response = app.response_class(
+        response=jsonpickle.encode(classProducts, unpicklable=False),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
+@app.route('/products/<int:productId>', methods=['GET'])
+def returnProducts(productId):
+    if not productId in classProducts:
+        return jsonify(), 404
+
+    product = classProducts[productId]
+    response = app.response_class(
+        response=jsonpickle.encode(product, unpicklable=False),
+        status=200,
+        mimetype='application/json'
+    )
+    
+    return response
 
 @app.route('/products', methods=['POST'])
 def createNewProduct():
@@ -43,24 +47,32 @@ def createNewProduct():
     classProducts[productId] = Product(product['id'],product['name'],product['price'])
     app.logger.warning("new product created")
     
-    return jsonify(product)
+    return jsonify(product), 201
 
 @app.route('/products/<int:productId>', methods = ['DELETE'])
 def deleteProduct(productId):
-    # consider getting productId from the url.
-    # see : http://flask.palletsprojects.com/en/1.1.x/quickstart/#variable-rules
+    if not productId in classProducts: 
+        return jsonify(), 404
+
     del classProducts[productId]
-    return jsonify(classProducts)
+    return jsonify(), 204
+
+@app.route('/products/<int:productId>', methods = ['PUT'])
+def putProduct(productId):
+    product = request.get_json()
+    updatedProduct = Product(productId, product['name'], product['price'])
+    classProducts[productId] = updatedProduct
+    response = app.response_class(
+        response=jsonpickle.encode(updatedProduct, unpicklable=False),
+        status=200,
+        mimetype='application/json'
+    )
+    return response, 200
 
 @app.route('/products')
 def queryString():
     arg1 = request.args['category']
     arg2 = request.args['brand']
 
-    return 'Filter:' + arg1 + 'Brand:' + arg2
+    return 'Filter; Category:' + arg1 + 'Brand:' + arg2
 
-@app.route('/products/<int:productId>', methods = ['PUT'])
-def putProduct(productId):
-    product = request.get_json()
-    classProducts[productId] = Product(product['id'],product['name'],product['price'])
-    return jsonpickle.encode(classProducts)
