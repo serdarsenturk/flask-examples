@@ -1,7 +1,13 @@
 from flask import Flask, jsonify, request
 import jsonpickle
+import sqlite3
+from flask import g
 
+DATABASE = '/Users/serdar/Documents/GitHub/flask-examples/project-api/my_project.db'
 app = Flask(__name__)
+conn = sqlite3.connect('my_project.db')
+print("Connected")
+
 
 class Product:
     def __init__(self,id,name,price):
@@ -23,7 +29,13 @@ def returnAllProducts():
         status=200,
         mimetype='application/json'
     )
+    cursor = conn.execute("SELECT * from products")
+    for row in cursor:
+        print(row)
+    conn.close()
     return response
+
+print(returnAllProducts())
 
 @app.route('/products/<int:productId>', methods=['GET'])
 def returnProducts(productId):
@@ -75,4 +87,3 @@ def queryString():
     arg2 = request.args['brand']
 
     return 'Filter; Category:' + arg1 + 'Brand:' + arg2
-
