@@ -3,7 +3,7 @@ import jsonpickle
 import sqlite3
 from flask import g
 
-DATABASE = '/Users/serdar/Documents/GitHub/flask-examples/project-api/my_project.db'
+DATABASE = '/Users/serdar/workdir/github/flask-examples/project-api/my_project.db'
 app = Flask(__name__)
 conn = sqlite3.connect('my_project.db')
 print("Connected")
